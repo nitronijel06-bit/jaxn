@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Admin — JAXN BLACK CARD</title>
+<meta name="theme-color" content="#080808" />
+<link rel="icon" type="image/png" href="jaxn-card.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{ --gold:#c6a568; --gold-hi:#e5c58a; --ink:#f2ead9; --dim:#b8b0a0; }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Inter',system-ui,sans-serif;font-weight:300;background:#080808;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+  .page{max-width:640px;margin:0 auto;padding:28px 20px 56px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.07);}
+  .brand{font-size:10.5px;font-weight:500;letter-spacing:.42em;color:var(--ink);white-space:nowrap;}
+  .mark{width:15px;height:15px;border:1px solid var(--gold);transform:rotate(45deg);background:linear-gradient(135deg,var(--gold-hi),#a8894f);flex:none;}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;letter-spacing:.08em;text-align:center;margin-top:28px;
+     background:linear-gradient(180deg,#fdfbf7 20%,var(--gold-hi) 78%,#a8894f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+  .summary{display:flex;gap:10px;justify-content:center;margin:22px 0 6px;flex-wrap:wrap;}
+  .stat{border:1px solid rgba(198,165,104,.3);padding:12px 18px;text-align:center;min-width:96px;}
+  .stat b{display:block;font-size:22px;font-weight:600;color:var(--gold-hi);}
+  .stat span{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);}
+  .card{border:1px solid rgba(255,255,255,.1);padding:14px 16px;margin-top:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .card .cid{font-weight:600;letter-spacing:.08em;color:var(--gold-hi);font-size:13px;}
+  .card .nm{font-size:14.5px;}
+  .card .meta{font-size:11.5px;color:var(--dim);letter-spacing:.06em;}
+  .card .grow{flex:1;min-width:140px;}
+  .pill{font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:4px 9px;border:1px solid;}
+  .pill.on{color:#9d8;border-color:rgba(153,221,136,.5);}
+  .pill.off{color:#e88;border-color:rgba(238,136,136,.5);}
+  button{
+    appearance:none;cursor:pointer;padding:10px 14px;background:none;border:1px solid rgba(198,165,104,.55);
+    color:var(--ink);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+  }
+  button:disabled{opacity:.5;}
+  .keybar{display:flex;gap:10px;margin-top:26px;}
+  input[type=password]{flex:1;padding:13px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(198,165,104,.3);color:var(--ink);font-family:'Inter',sans-serif;font-size:15px;outline:none;border-radius:0;}
+  .msg{display:none;margin-top:16px;padding:13px 15px;font-size:13.5px;line-height:1.7;border:1px solid rgba(238,136,136,.5);color:#f0b9b9;background:rgba(120,30,30,.15);}
+  .msg.show{display:block;}
+  .empty{text-align:center;color:var(--dim);padding:34px 0;font-size:13.5px;line-height:1.8;}
+  footer{margin-top:46px;padding-top:20px;text-align:center;border-top:1px solid rgba(255,255,255,.06);font-size:9.5px;letter-spacing:.4em;color:#6f6a5e;text-transform:uppercase;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar"><span class="brand">JAXN&nbsp;BLACK&nbsp;CARD</span><span class="mark"></span></div>
+  <h1>Profile Dashboard</h1>
+
+  <div class="keybar">
+    <input type="password" id="key" placeholder="Admin key" autocomplete="off" />
+    <button id="load">Load</button>
+  </div>
+  <div id="msg" class="msg" role="alert"></div>
+
+  <div class="summary" id="summary" style="display:none;">
+    <div class="stat"><b id="sTotal">0</b><span>Profiles</span></div>
+    <div class="stat"><b id="sBlank">0</b><span>Blank cards</span></div>
+    <div class="stat"><b id="sTaps">0</b><span>Total taps</span></div>
+  </div>
+
+  <div id="list"></div>
+
+  <footer>JAXN&nbsp;BLACK&nbsp;CARD</footer>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var workerUrl = ((window.JAXN_CONFIG || {}).workerUrl || '').replace(/\/$/,'');
+  var BATCH = 100; // JX-1001..JX-1100
+  var msg = $('msg');
+
+  function err(t){ msg.textContent = t || ''; msg.classList.toggle('show', !!t); }
+  function esc(s){ return String(s == null ? '' : s); }
+
+  if (!workerUrl) err('Automation is not connected yet — finish DEPLOY.md Part 3, then paste the Worker URL into config.js.');
+  var saved = sessionStorage.getItem('jaxnAdminKey');
+  if (saved) $('key').value = saved;
+
+  function post(path, body){
+    return fetch(workerUrl + path, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    }).then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(j){
+        if (!r.ok) throw new Error(j.error || ('Request failed (' + r.status + ')'));
+        return j;
+      });
+    });
+  }
+
+  function key(){ return $('key').value.trim(); }
+
+  function load(){
+    err('');
+    if (!workerUrl) return;
+    if (!key()) { err('Enter the admin key.'); return; }
+    sessionStorage.setItem('jaxnAdminKey', key());
+    $('load').disabled = true;
+    post('/admin/list', { key: key() })
+      .then(render)
+      .catch(function(e){ err(e.message); })
+      .finally(function(){ $('load').disabled = false; });
+  }
+
+  function render(j){
+    var profiles = j.profiles || {};
+    var taps = j.taps || {};
+    var ids = Object.keys(profiles).sort();
+    var totalTaps = 0;
+    ids.forEach(function(i){ totalTaps += (taps[i] || 0); });
+    $('summary').style.display = 'flex';
+    $('sTotal').textContent = ids.length;
+    $('sBlank').textContent = Math.max(0, BATCH - ids.length);
+    $('sTaps').textContent = totalTaps;
+
+    var list = $('list'); list.textContent = '';
+    if (!ids.length) {
+      var e = document.createElement('div'); e.className = 'empty';
+      e.textContent = 'No profiles yet. Activate a card to see it here.';
+      list.appendChild(e); return;
+    }
+    ids.forEach(function(id){
+      var p = profiles[id];
+      var card = document.createElement('div'); card.className = 'card';
+      var grow = document.createElement('div'); grow.className = 'grow';
+      var cid = document.createElement('div'); cid.className = 'cid'; cid.textContent = id;
+      var nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = esc(p.name);
+      var meta = document.createElement('div'); meta.className = 'meta';
+      meta.textContent = (p.look || 'executive') + ' • ' + (taps[id] || 0) + ' taps' + (p.updated ? ' • updated ' + p.updated : '');
+      grow.appendChild(cid); grow.appendChild(nm); grow.appendChild(meta);
+      var pill = document.createElement('span');
+      pill.className = 'pill ' + (p.status === 'off' ? 'off' : 'on');
+      pill.textContent = p.status === 'off' ? 'Off' : 'Live';
+      var btn = document.createElement('button');
+      btn.textContent = p.status === 'off' ? 'Turn on' : 'Turn off';
+      btn.addEventListener('click', function(){
+        btn.disabled = true;
+        post('/admin/toggle', { key: key(), id: id })
+          .then(load)
+          .catch(function(e){ err(e.message); btn.disabled = false; });
+      });
+      var view = document.createElement('button');
+      view.textContent = 'View';
+      view.addEventListener('click', function(){
+        window.open('index.html?id=' + encodeURIComponent(id), '_blank');
+      });
+      card.appendChild(grow); card.appendChild(pill); card.appendChild(view); card.appendChild(btn);
+      list.appendChild(card);
+    });
+  }
+
+  $('load').addEventListener('click', load);
+  $('key').addEventListener('keydown', function(e){ if (e.key === 'Enter') load(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Activate Your Card — JAXN BLACK CARD</title>
+<meta name="theme-color" content="#080808" />
+<link rel="icon" type="image/png" href="jaxn-card.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{ --gold:#c6a568; --gold-hi:#e5c58a; --ink:#f2ead9; --dim:#b8b0a0; --err:#e88; --ok:#9d8; }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Inter',system-ui,sans-serif;font-weight:300;background:#080808;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+  .page{max-width:480px;margin:0 auto;padding:28px 22px 56px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.07);}
+  .brand{font-size:10.5px;font-weight:500;letter-spacing:.42em;color:var(--ink);white-space:nowrap;}
+  .mark{width:15px;height:15px;border:1px solid var(--gold);transform:rotate(45deg);background:linear-gradient(135deg,var(--gold-hi),#a8894f);flex:none;}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;letter-spacing:.08em;text-align:center;margin-top:30px;
+     background:linear-gradient(180deg,#fdfbf7 20%,var(--gold-hi) 78%,#a8894f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+  .sub{text-align:center;color:var(--dim);font-size:13px;line-height:1.8;margin-top:10px;letter-spacing:.03em;}
+  form{margin-top:30px;display:flex;flex-direction:column;gap:16px;}
+  label{display:block;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:7px;}
+  input[type=text],input[type=url],input[type=password]{
+    width:100%;padding:13px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(198,165,104,.3);
+    color:var(--ink);font-family:'Inter',sans-serif;font-size:15px;font-weight:300;outline:none;border-radius:0;
+  }
+  input:focus{border-color:var(--gold-hi);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .linkrow{display:grid;grid-template-columns:110px 1fr;gap:10px;margin-bottom:10px;}
+  .looks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .look{cursor:pointer;}
+  .look input{position:absolute;opacity:0;pointer-events:none;}
+  .look .chip{
+    display:block;text-align:center;padding:14px 6px 11px;border:1px solid rgba(255,255,255,.14);
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);transition:all .25s ease;
+  }
+  .look .dot{display:block;width:18px;height:18px;margin:0 auto 9px;transform:rotate(45deg);border:1px solid rgba(255,255,255,.25);}
+  .look[data-v=executive] .dot{background:linear-gradient(135deg,#e5c58a,#a8894f);}
+  .look[data-v=broadcast] .dot{background:linear-gradient(135deg,#e8b07e,#9c6630);}
+  .look[data-v=creator] .dot{background:linear-gradient(135deg,#cdbffa,#7c63d8);}
+  .look input:checked + .chip{border-color:var(--gold-hi);color:var(--ink);background:rgba(198,165,104,.07);}
+  .btn{
+    appearance:none;cursor:pointer;width:100%;padding:16px;margin-top:6px;
+    background:linear-gradient(180deg,rgba(198,165,104,.16),rgba(198,165,104,.06));
+    border:1px solid var(--gold);color:var(--ink);
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:.26em;text-transform:uppercase;
+  }
+  .btn:disabled{opacity:.5;cursor:wait;}
+  .btn.ghost{background:none;border-color:rgba(255,255,255,.18);color:var(--dim);letter-spacing:.2em;font-size:11.5px;padding:13px;}
+  .msg{display:none;padding:14px 16px;font-size:13.5px;line-height:1.7;border:1px solid;}
+  .msg.err{display:block;border-color:rgba(238,136,136,.5);color:#f0b9b9;background:rgba(120,30,30,.15);}
+  .msg.ok{display:block;border-color:rgba(153,221,136,.45);color:#cdeac2;background:rgba(40,90,30,.15);}
+  .msg a{color:var(--gold-hi);}
+  .hint{font-size:11.5px;color:#7d7666;line-height:1.7;letter-spacing:.02em;}
+  footer{margin-top:46px;padding-top:20px;text-align:center;border-top:1px solid rgba(255,255,255,.06);font-size:9.5px;letter-spacing:.4em;color:#6f6a5e;text-transform:uppercase;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar"><span class="brand">JAXN&nbsp;BLACK&nbsp;CARD</span><span class="mark"></span></div>
+
+  <h1>Activate Your Card</h1>
+  <p class="sub">Fill this in once — your card goes live in about a minute.<br/>Come back with your card ID and code any time to edit.</p>
+
+  <form id="f" novalidate>
+    <div id="msg" class="msg" role="alert"></div>
+
+    <div class="row2">
+      <div>
+        <label for="cid">Card ID</label>
+        <input type="text" id="cid" placeholder="JX-1004" autocomplete="off" autocapitalize="characters" />
+      </div>
+      <div>
+        <label for="code">Activation code</label>
+        <input type="text" id="code" placeholder="XXXX-XXXX" autocomplete="off" autocapitalize="characters" />
+      </div>
+    </div>
+    <button type="button" class="btn ghost" id="loadBtn">Load my current info (for edits)</button>
+
+    <div>
+      <label for="name">Your name *</label>
+      <input type="text" id="name" placeholder="Your name" maxlength="80" />
+    </div>
+    <div>
+      <label for="tagline">Title / tagline</label>
+      <input type="text" id="tagline" placeholder="e.g. Realtor • Atlanta, GA" maxlength="120" />
+    </div>
+
+    <div>
+      <label>Pick your look</label>
+      <div class="looks">
+        <label class="look" data-v="executive"><input type="radio" name="look" value="executive" checked /><span class="chip"><span class="dot"></span>Executive</span></label>
+        <label class="look" data-v="broadcast"><input type="radio" name="look" value="broadcast" /><span class="chip"><span class="dot"></span>Broadcast</span></label>
+        <label class="look" data-v="creator"><input type="radio" name="look" value="creator" /><span class="chip"><span class="dot"></span>Creator</span></label>
+      </div>
+    </div>
+
+    <div>
+      <label>Your links (up to 6)</label>
+      <div id="linkRows"></div>
+      <p class="hint">Label examples: Instagram, TikTok, Facebook, Website, Call, Email.<br/>For Call use a link like tel:+17705550123 — for Email use mailto:you@email.com.</p>
+    </div>
+
+    <button type="submit" class="btn" id="go">Activate / Save</button>
+    <p class="hint" style="text-align:center;">Your link never changes — edits update behind the same card.</p>
+  </form>
+
+  <footer>JAXN&nbsp;BLACK&nbsp;CARD</footer>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var msg = $('msg');
+  var workerUrl = ((window.JAXN_CONFIG || {}).workerUrl || '').replace(/\/$/,'');
+
+  var rows = $('linkRows');
+  for (var i = 0; i < 6; i++) {
+    var d = document.createElement('div'); d.className = 'linkrow';
+    var li = document.createElement('input'); li.type = 'text'; li.placeholder = 'Label'; li.maxLength = 30; li.className = 'llabel';
+    var ui = document.createElement('input'); ui.type = 'url'; ui.placeholder = 'https://…'; ui.maxLength = 300; ui.className = 'lurl';
+    d.appendChild(li); d.appendChild(ui); rows.appendChild(d);
+  }
+
+  var qid = new URLSearchParams(location.search).get('id');
+  if (qid) $('cid').value = qid.toUpperCase();
+
+  function show(kind, html){
+    msg.className = 'msg ' + kind;
+    msg.innerHTML = html;
+    msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  if (!workerUrl) {
+    show('err', 'This form is not connected yet. The site owner needs to finish the automation setup (DEPLOY.md, Part 3) before activations can be saved.');
+    $('go').disabled = true;
+  }
+
+  function payloadBase(){
+    return {
+      id: $('cid').value.toUpperCase().trim(),
+      code: $('code').value.toUpperCase().trim()
+    };
+  }
+
+  function post(path, body){
+    return fetch(workerUrl + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(j){
+        if (!r.ok) throw new Error(j.error || ('Request failed (' + r.status + ')'));
+        return j;
+      });
+    });
+  }
+
+  $('loadBtn').addEventListener('click', function(){
+    var b = payloadBase();
+    if (!b.id || !b.code) { show('err', 'Enter your Card ID and activation code first.'); return; }
+    $('loadBtn').disabled = true;
+    post('/activate', { id: b.id, code: b.code, loadOnly: true })
+      .then(function(j){
+        if (!j.profile) { show('err', 'No profile on this card yet — fill the form in and hit Activate.'); return; }
+        $('name').value = j.profile.name || '';
+        $('tagline').value = j.profile.tagline || '';
+        var look = document.querySelector('input[name=look][value="' + (j.profile.look || 'executive') + '"]');
+        if (look) look.checked = true;
+        var labels = document.querySelectorAll('.llabel'), urls = document.querySelectorAll('.lurl');
+        (j.profile.links || []).forEach(function(l, i){
+          if (labels[i]) { labels[i].value = l.label || ''; urls[i].value = l.url || ''; }
+        });
+        show('ok', 'Loaded. Edit anything and hit Activate / Save.');
+      })
+      .catch(function(e){ show('err', esc(e.message)); })
+      .finally(function(){ $('loadBtn').disabled = false; });
+  });
+
+  $('f').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var b = payloadBase();
+    var labels = document.querySelectorAll('.llabel'), urls = document.querySelectorAll('.lurl');
+    var links = [];
+    for (var i = 0; i < labels.length; i++) {
+      var u = urls[i].value.trim(), l = labels[i].value.trim();
+      if (u) links.push({ label: l || 'Link', url: u });
+    }
+    var profile = {
+      name: $('name').value.trim(),
+      tagline: $('tagline').value.trim(),
+      look: (document.querySelector('input[name=look]:checked') || {}).value || 'executive',
+      links: links
+    };
+    if (!b.id || !b.code) { show('err', 'Enter your Card ID and activation code.'); return; }
+    if (!profile.name) { show('err', 'Please enter your name.'); return; }
+    $('go').disabled = true; $('go').textContent = 'Saving…';
+    post('/activate', { id: b.id, code: b.code, profile: profile })
+      .then(function(j){
+        var link = j.url || ('index.html?id=' + encodeURIComponent(b.id));
+        show('ok', 'Saved! Your page goes live in about a minute:<br/><a href="' + esc(link) + '" target="_blank" rel="noopener">' + esc(link) + '</a><br/>Tap your card after a minute to see it.');
+        $('go').textContent = 'Activate / Save';
+      })
+      .catch(function(e){
+        show('err', esc(e.message));
+        $('go').textContent = 'Activate / Save';
+      })
+      .finally(function(){ $('go').disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>

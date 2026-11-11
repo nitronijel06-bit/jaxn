@@ -99,5 +99,13 @@
   ],
   "status": "active",
   "updated": "2026-11-11"
+ },
+ "JX-1006": {
+  "name": "Multipart Test",
+  "tagline": "",
+  "look": "creator",
+  "links": [],
+  "status": "active",
+  "updated": "2026-11-11"
  }
 }

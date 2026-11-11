@@ -74,5 +74,30 @@
   ],
   "status": "active",
   "updated": "2026-11-11"
+ },
+ "JX-1005": {
+  "name": "Brooklyn",
+  "tagline": "Mental Health ready",
+  "look": "executive",
+  "links": [
+   {
+    "label": "Call",
+    "url": "tel:+16789737752"
+   },
+   {
+    "label": "Instagram",
+    "url": "https://instagram.com/BlackMental988"
+   },
+   {
+    "label": "Website",
+    "url": "https://blackmentalcollective.com"
+   },
+   {
+    "label": "Email",
+    "url": "mailto:blackmental988@gmail.com"
+   }
+  ],
+  "status": "active",
+  "updated": "2026-11-11"
  }
 }

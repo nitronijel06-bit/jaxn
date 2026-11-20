@@ -101,12 +101,29 @@
   "updated": "2026-11-11"
  },
  "JX-1006": {
-  "name": "Multipart Test",
-  "tagline": "",
-  "look": "creator",
-  "links": [],
+  "name": "John Lu",
+  "tagline": "Minuteman Press — Duluth, GA",
+  "look": "executive",
+  "links": [
+   {
+    "label": "Call",
+    "url": "tel:+17708585055"
+   },
+   {
+    "label": "Website",
+    "url": "https://ga207.minuteman.com"
+   },
+   {
+    "label": "Email",
+    "url": "mailto:ga207@minutemanpress.com"
+   },
+   {
+    "label": "Directions",
+    "url": "https://www.google.com/maps/search/?api=1&query=3940%20Buford%20Hwy%20Ste%20A106%2C%20Duluth%2C%20GA%2030096"
+   }
+  ],
   "status": "off",
-  "updated": "2026-11-11"
+  "updated": "2026-11-20"
  },
  "JX-1007": {
   "name": "Webhook Test",
